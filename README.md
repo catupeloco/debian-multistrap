@@ -1,183 +1,92 @@
-# debian-multistrap
-----Introduction:
+# debian-multistrap  
 
-This project has a different aproach of typical debootstrap installation process.
-In my case I've wanted to make an x2go desktop server running debian 12, xfce desktop, the lastest libreoffice from website and Google Chrome. You may add the firefox-esr or the lastest stable of course if you like. In a future I may add the "new" firefox repo in the build process.
+## Introduction  
 
-----The script:
+This project takes a different approach compared to the typical debootstrap installation process.  
+In my case, I wanted to create an x2go desktop server running Debian 12 with the XFCE desktop environment, the latest LibreOffice from the official website, and Google Chrome. You can, of course, add Firefox ESR or the latest stable version if you prefer. In the future, I may include the "new" Firefox repository in the build process.  
 
-The are some parts in the script that are not perfect but if you have a debian already installed in your language and want to make a disk with the latest stable builds this is for you. The script is based on several examples found on the open web and a lot of trial and error by my self.
-It will automaticaly make a backup of it self, so if you are changing staff to fit your preferences you can easily go back to previous versions.
-With multistrap all the software (but libreoffice) is installed within the bootstrap environment so in the first go you have all the lastest software available.
+## The Script  
 
-----Signature stuff
+Some parts of the script are not perfect, but if you already have Debian installed in your preferred language and want to create a disk with the latest stable builds, this is for you.  
+The script is based on various examples found online and refined through a lot of trial and error on my part.  
 
-As current repositories require signature staff, I've twisted things to avoid multistrap to fail. Afterwards the built system makes use of real signatures, so don't worry.
+It automatically creates a backup of itself, so if you make changes to customize it for your preferences, you can easily revert to previous versions.  
+With multistrap, all the software (except LibreOffice) is installed within the bootstrap environment. This ensures you start with the latest available software.  
 
-----Cache folder
+## Handling Signatures  
 
-Because I've runned the script a lot in the same day I was tired of downloading all the deb packages again and again. So I've used /var/cache/apt/archives folder in the "cooking" environment and the "cooking" target as a link so even if the target is totally ereased all the packages won't be downloaded again and again.
-This could lead to errors on multistrap if various versions of the same packages are in the folder, so for sanity the script will erase all packages at the first run of the day.
+Since current repositories require signatures, I've made adjustments to prevent multistrap from failing. Once the system is built, it uses proper signatures, so there’s no need to worry.  
 
-----Language and installing within chroot
+## Cache Folder  
 
-In multistrap it seems that some packages are not fully configurated, you may need to fix some on chroot or first real boot.
-Even if I wanted to fully automate the language configuration, in some cases the use of preseed answers was not enough, so the script precopy some "defauls" files from local installation on "cooking machine" to target. Another example of "language" fixes was the "universal" C language I had to put to avoid configuration errors. This was because if variables like "LC_ALL, LANGUAGE, LANG" were not set some errors were shown on screen when dpkg or tasksel ran.
+Because I ran the script multiple times in the same day, I got tired of re-downloading all the `.deb` packages repeatedly. To solve this, I used the `/var/cache/apt/archives` folder in the "cooking" environment and linked it to the target. Even if the target gets completely erased, the packages won’t need to be downloaded again.  
 
-----Use of tasksel on chroot
+However, this might cause errors in multistrap if multiple versions of the same package are present. For this reason, the script deletes all cached packages at the start of the day.  
 
-Even if I install all same packages from a "real" installation I've detected a bug on powering off vm from "virtual power button". Some ACPI stuff wasn't been done on multistrap. To fix this I've added a step of "tasksel install" that makes some unknow magic. This doesn't really installs a package but it may reconfigure something.
+## Language and Installation within Chroot  
 
-----Libreoffice installation
+In multistrap, some packages are not fully configured, requiring manual fixes in the chroot environment or during the first real boot.  
 
-In a few lines this script scraple libreoffice web page and downloads locally the tar.gz files. Next it decompress both files and set them ready for installation on chroot. The installation runs in background so in the meantime I could manually set sudo user and its password. Then it waits to finish.
+Although I tried to automate language configuration entirely, using preseed answers was insufficient in some cases. The script pre-copies some "default" files from the local installation on the "cooking machine" to the target system. For example, I had to set the "universal" C language environment to avoid configuration errors. Without variables like `LC_ALL`, `LANGUAGE`, and `LANG`, errors would appear during `dpkg` or `tasksel` executions.  
 
-----Console spanish/latin keyboard
+## Using Tasksel in Chroot  
 
-I'm from Argentina, so laptops use the latam keyboard. Debian has a long time bug that some files for console lenguage doesn't work in latam keyboard. So for this I download the files and put them where they should be in the first place and then it simply works.
+Even when I installed the same packages as a "real" installation, I found a bug related to powering off a VM using the "virtual power button." Some ACPI configurations were missing in multistrap. To fix this, I added a `tasksel install` step. While it doesn’t install new packages, it seems to reconfigure something.  
 
-----X2Go fixes
+## LibreOffice Installation  
 
-X2go has 3 mayor bugs
-1) It works awful when composing is enabled on xfce [disabled]
-2) When you put your mouse cursor on the top right corner and you clic it, x2go minimize it self. This is insane when you just want to close a window with the normal X [disabled]
-3) When you press Control + Alt + T it disconnects. For me this is also insane as I open terminal this way all the time. [disabled]
+The script scrapes the LibreOffice website and downloads the necessary tar.gz files.  
+It then extracts the files and prepares them for installation in the chroot environment. The installation runs in the background, allowing time to manually configure the sudo user and set its password.  
 
-----Requirements:
+## Console Keyboard for Spanish/Latin American Layout  
 
-A live or local debian/ubuntu base environment for running the script.
-A free drive (beware that it will be formated and all data will be lost)
-Access to internet (you may use proxy but in this example is not implemented)
+I’m from Argentina, and many laptops use the LATAM keyboard. Debian has had a long-standing bug where console language files don’t work with the LATAM layout. To fix this, the script downloads and places the correct files where they belong, ensuring the keyboard works properly.  
 
-----Brake down of the differents parts of the script.
+## Fixes for X2Go  
 
-Making script backup 
+X2Go has three major issues:  
 
-Installing dependencies for this script 
+1. It performs poorly when compositing is enabled in XFCE [**disabled**].  
+2. Clicking in the top-right corner minimizes the X2Go session, which is inconvenient if you’re trying to close a window using the "X" button [**disabled**].  
+3. Pressing `Ctrl + Alt + T` disconnects the session. This is problematic for me as I often open terminals this way [**disabled**].  
 
-Unmounting /dev/vdb  
+## Requirements  
 
-Setting partition table to GPT (UEFI) 
+- A live or installed Debian/Ubuntu-based environment to run the script.  
+- A free drive (note: it will be formatted, and all data will be lost).  
+- Internet access (a proxy is not implemented in this example).  
 
-Creating EFI partition 
+## Breakdown of the Script  
 
-Creating OS partition 
+1. Create a script backup.  
+2. Install dependencies for the script.  
+3. Unmount `/dev/vdb`.  
+4. Set up the partition table to GPT (UEFI).  
+5. Create the EFI partition.  
+6. Create the OS partition.  
+7. Format the partitions.  
+8. Mount the OS partition.  
+9. Create directories in `/tmp/installing-rootfs`.  
+10. Download and install X2Go keyring in `/tmp/installing-rootfs`.  
+11. Download and install Google Chrome keyring in `/tmp/installing-rootfs`.  
+12. Create a configuration file for multistrap.  
+13. Run multistrap to build the system.  
+14. Configure the network settings.  
+15. Mount the EFI partition.  
+16. Generate the `fstab` file.  
+17. Prepare the system for chroot.  
+18. Download LibreOffice tar.gz files and extract them.  
+19. Set keyboard maps for non-graphical consoles.  
+20. Copy skeleton files, default settings, and crontabs to the target system.  
+21. Disable compositing in XFCE for X2Go.  
+22. Generate the `rc.local` file for simple startup scripts.  
+23. Enter the chroot environment.  
+24. Set up additional packages in the chroot.  
+25. Install GRUB bootloader.  
+26. Add a local user with a custom username and password.  
+27. Install LibreOffice and its language pack.  
+28. Generate system locales.  
+29. Disable unnecessary services like `ldm`.  
+30. Unmount `/dev/vdb`.  
 
-Formating partitions 
-
-Mounting OS partition 
-
-Downloading x2go and Google Chrome keyrings 
-
----------Creating Directories in /tmp/installing-rootfs
-
----------Installing x2go keyring here
-
----------Installing x2go keyring in /tmp/installing-rootfs
-
----------Installing chrome keyring here
-
----------Installing chrome keyring in /tmp/installing-rootfs
-
-Creating configuration file for multistrap 
-
-Running multistrap 
-
-Configurating the network 
-
-Mounting EFI partition 
-
-Generating fstab 
-
-Getting ready for chroot 
-
-Downloading Libreoffice 
-
-Setting Keyboard maps for non graphical console 
-
-Copying skel, defaults and crontab 
-
-Fixing XFCE on X2Go by disabling compositing 
-
-Generating rc.local for simple start up scripts 
-
-Entering chroot 
-
-Setting up additional packages 
-
-Installing grub 
-
-Adding local user 
-
-What username do you want?: username
-
-New password: 
-
-Retype new password: 
-
-passwd: password updated successfully
-
-Installing LibreOffice and its language pack 
-
-LibreOffice X.X.X.X installation done.
-
-Listing relevant packages 
-
-[removed part as it has 'today' versions]
-
-Setting languaje 
-
-Current default time zone: 'America/Argentina/Buenos_Aires'
-
-Local time is now:      Sat Oct 26 01:21:52 -03 2024.
-
-Universal Time is now:  Sat Oct 26 04:21:52 UTC 2024.
-
-
-Generating locales (this might take a while)...
-
-  es_AR.UTF-8... done
-  
-Generation complete.
-
-Generating locales (this might take a while)...
-
-  es_AR.UTF-8... done
-  
-Generation complete.
-
-LANG=C
-
-LANGUAGE=C
-
-LC_CTYPE="C"
-
-LC_NUMERIC="C"
-
-LC_TIME="C"
-
-LC_COLLATE="C"
-
-LC_MONETARY="C"
-
-LC_MESSAGES="C"
-
-LC_PAPER="C"
-
-LC_NAME="C"
-
-LC_ADDRESS="C"
-
-LC_TELEPHONE="C"
-
-LC_MEASUREMENT="C"
-
-LC_IDENTIFICATION="C"
-
-LC_ALL=C
-
-Disabling ldm 
-
-Unmounting /dev/vdb 
-
-END of the road!! keep up the good work
+**End of the road! Keep up the good work!**  
