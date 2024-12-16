@@ -24,73 +24,134 @@ A free drive (beware that it will be formated and all data will be lost)
 Access to internet (you may use proxy but in this example is not implemented)
 
 ----Brake down of the differents parts of the script.
+
 Making script backup 
+
 Installing dependencies for this script 
+
 Unmounting /dev/vdb  
+
 Setting partition table to GPT (UEFI) 
+
 Creating EFI partition 
+
 Creating OS partition 
+
 Formating partitions 
+
 Mounting OS partition 
+
 Downloading x2go and Google Chrome keyrings 
+
 ---------Creating Directories in /tmp/installing-rootfs
+
 ---------Installing x2go keyring here
+
 ---------Installing x2go keyring in /tmp/installing-rootfs
+
 ---------Installing chrome keyring here
+
 ---------Installing chrome keyring in /tmp/installing-rootfs
+
 Creating configuration file for multistrap 
+
 Running multistrap 
+
 Configurating the network 
+
 Mounting EFI partition 
+
 Generating fstab 
+
 Getting ready for chroot 
+
 Downloading Libreoffice 
+
 Setting Keyboard maps for non graphical console 
+
 Copying skel, defaults and crontab 
+
 Fixing XFCE on X2Go by disabling compositing 
+
 Generating rc.local for simple start up scripts 
+
 Entering chroot 
+
 Setting up additional packages 
+
 Installing grub 
+
 Adding local user 
-What username do you want?: jgalvez
+
+What username do you want?: username
+
 New password: 
+
 Retype new password: 
+
 passwd: password updated successfully
+
 Installing LibreOffice and its language pack 
+
 LibreOffice X.X.X.X installation done.
+
 Listing relevant packages 
+
 [removed part as it has 'today' versions]
+
 Setting languaje 
 
 Current default time zone: 'America/Argentina/Buenos_Aires'
+
 Local time is now:      Sat Oct 26 01:21:52 -03 2024.
+
 Universal Time is now:  Sat Oct 26 04:21:52 UTC 2024.
 
+
 Generating locales (this might take a while)...
+
   es_AR.UTF-8... done
+  
 Generation complete.
+
 Generating locales (this might take a while)...
+
   es_AR.UTF-8... done
+  
 Generation complete.
+
 LANG=C
+
 LANGUAGE=C
+
 LC_CTYPE="C"
+
 LC_NUMERIC="C"
+
 LC_TIME="C"
+
 LC_COLLATE="C"
+
 LC_MONETARY="C"
+
 LC_MESSAGES="C"
+
 LC_PAPER="C"
+
 LC_NAME="C"
+
 LC_ADDRESS="C"
+
 LC_TELEPHONE="C"
+
 LC_MEASUREMENT="C"
+
 LC_IDENTIFICATION="C"
+
 LC_ALL=C
+
 Disabling ldm 
+
 Unmounting /dev/vdb 
-END of the road!! keep up the good work 
 
-
-
+END of the road!! keep up the good work
